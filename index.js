@@ -69,7 +69,9 @@ app.post("/tasks", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+const PORT = process.env.PORT || 10000;
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
+
