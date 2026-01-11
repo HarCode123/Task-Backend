@@ -13,6 +13,11 @@ const auth = new google.auth.GoogleAuth({
 
 const SHEET_ID = "PASTE_YOUR_GOOGLE_SHEET_ID";
 
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully 🚀");
+});
+
+
 app.get("/tasks", async (req, res) => {
   try {
     const client = await auth.getClient();
