@@ -12,7 +12,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 const SHEET_ID = "1_PKhTH4AWGUWcqekUPK6sFr2FYLdazgsx4YqkIXrvTg";
-
+const SHEET_NAME = "Sheet2";
 app.get("/", (req, res) => {
   res.send("Backend is running successfully 🚀");
 });
@@ -78,11 +78,11 @@ app.post("/tasks", async (req, res) => {
 app.get("/tasks", async (req, res) => {
   try {
     console.log("Spreadsheet ID:", SPREADSHEET_ID);
-    console.log("Range:", "tasks!A2:E");
+    console.log("Range:", "Sheet2!A2:E");
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: "tasks!A2:E",
+      range: "Sheet2!A2:E",
     });
 
     res.json(response.data.values || []);
