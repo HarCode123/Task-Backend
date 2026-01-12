@@ -79,6 +79,94 @@ app.post("/tasks", async (req, res) => {
   }
 });
 
+// ✅ UPDATE TASK STATUS (Pending → Completed)
+app.put("/tasks/:id", async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const { status } = req.body;
+
+    const client = await auth.getClient();
+    const sheets = google.sheets({ version: "v4", auth: client });
+
+    // Get all rows
+    const result = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: `${SHEET_NAME}!A2:G`
+    });
+
+    const rows = result.data.values || [];
+
+    const rowIndex = rows.findIndex(row => row[0] === taskId);
+    if (rowIndex === -1) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    const sheetRow = rowIndex + 2; // because A2
+
+    // Update status column (G)
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `${SHEET_NAME}!G${sheetRow}`,
+      valueInputOption: "RAW",
+      requestBody: {
+        values: [[status]]
+      }
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ DELETE TASK
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const taskId = req.params.id;
+
+    const client = await auth.getClient();
+    const sheets = google.sheets({ version: "v4", auth: client });
+
+    const result = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: `${SHEET_NAME}!A2:G`
+    });
+
+    const rows = result.data.values || [];
+    const rowIndex = rows.findIndex(row => row[0] === taskId);
+
+    if (rowIndex === -1) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SHEET_ID,
+      requestBody: {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: 0, // ⚠️ FIRST SHEET ONLY
+                dimension: "ROWS",
+                startIndex: rowIndex + 1,
+                endIndex: rowIndex + 2
+              }
+            }
+          }
+        ]
+      }
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
