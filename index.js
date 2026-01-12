@@ -12,7 +12,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 const SHEET_ID = "1_PKhTH4AWGUWcqekUPK6sFr2FYLdazgsx4YqkIXrvTg";
-const SHEET_NAME = "Sheet2";
+const SHEET_NAME = "Sheet1";
 
 app.get("/", (req, res) => {
   res.send("Backend is running successfully 🚀");
