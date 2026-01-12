@@ -75,6 +75,24 @@ app.post("/tasks", async (req, res) => {
   }
 });
 
+app.get("/tasks", async (req, res) => {
+  try {
+    console.log("Spreadsheet ID:", SPREADSHEET_ID);
+    console.log("Range:", "tasks!A2:E");
+
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: "tasks!A2:E",
+    });
+
+    res.json(response.data.values || []);
+  } catch (error) {
+    console.error("GOOGLE ERROR FULL:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
