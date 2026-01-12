@@ -25,7 +25,7 @@ app.get("/tasks", async (req, res) => {
 
     const result = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: "Sheet1!A2:G"
+      range: "Sheet2!A2:G"
     });
 
     const rows = result.data.values || [];
