@@ -13,11 +13,12 @@ const auth = new google.auth.GoogleAuth({
 
 const SHEET_ID = "1_PKhTH4AWGUWcqekUPK6sFr2FYLdazgsx4YqkIXrvTg";
 const SHEET_NAME = "Sheet2";
+
 app.get("/", (req, res) => {
   res.send("Backend is running successfully 🚀");
 });
 
-
+// ✅ GET TASKS
 app.get("/tasks", async (req, res) => {
   try {
     const client = await auth.getClient();
@@ -25,7 +26,7 @@ app.get("/tasks", async (req, res) => {
 
     const result = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: "Sheet2!A2:G"
+      range: `${SHEET_NAME}!A2:G`
     });
 
     const rows = result.data.values || [];
@@ -41,10 +42,12 @@ app.get("/tasks", async (req, res) => {
 
     res.json(tasks);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
+// ✅ ADD TASK
 app.post("/tasks", async (req, res) => {
   try {
     const { title, startDate, dueDate, subTasks, priority } = req.body;
@@ -54,7 +57,7 @@ app.post("/tasks", async (req, res) => {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: "Sheet1!A:G",
+      range: `${SHEET_NAME}!A:G`,
       valueInputOption: "RAW",
       requestBody: {
         values: [[
@@ -71,31 +74,12 @@ app.post("/tasks", async (req, res) => {
 
     res.json({ success: true });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-app.get("/tasks", async (req, res) => {
-  try {
-    console.log("Spreadsheet ID:", SPREADSHEET_ID);
-    console.log("Range:", "Sheet2!A2:E");
-
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "Sheet2!A2:E",
-    });
-
-    res.json(response.data.values || []);
-  } catch (error) {
-    console.error("GOOGLE ERROR FULL:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-
 const PORT = process.env.PORT || 10000;
-
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });
-
