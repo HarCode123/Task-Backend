@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TaskTracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<script>
+    if (!localStorage.getItem("currentUser")) {
+        window.location.href = "authenticate.html";
+    }
+</script>
+
+
+<body>
+    <h1 class="app-title">Task Tracker</h1>
+
+    <!-- MAIN SECTION -->
+    <section class="section">
+        <h2>Create a Task</h2>
+
+        <div class="card task-form">
+
+    <label>Task Title</label>
+    <input type="text" id="taskTitle">
+
+    <label>Date Created</label>
+    <input type="date" id="startDate">
+
+    <label>Due Date</label>
+    <input type="date" id="dueDate">
+
+    <label>Sub-Tasks</label>
+    <textarea id="subTasks" placeholder="Comma separated"></textarea>
+    <label>Priority</label>
+    <select id="priority">
+    <option value="High">High</option>
+    <option value="Medium" selected>Medium</option>
+    <option value="Low">Low</option>
+</select>
+
+
+    <button class="btn" onclick="addTask()">Add Task</button>
+
+</div>
+
+        <div class="filter-bar">
+    <button class="btn" onclick="setFilter('all')">All</button>
+    <button class="btn" onclick="setFilter('pending')">Pending</button>
+    <button class="btn" onclick="setFilter('completed')">Completed</button>
+</div>
+        <div id="taskList"></div>
+    </section>
+
+    <script src="script.js"></script>
+    <div class="logout-container">
+    <button class="btn logout-btn" onclick="logout()">Logout</button>
+</div>
+
+</body>
+</html>
